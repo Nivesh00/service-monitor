@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
-	// "strings"
 )
 
 // Services is an array of services
@@ -90,9 +89,4 @@ func ReadServices(file_path string) *Services {
 	}
 
 	return &services
-}
-
-func ChangeFirst(services *Services) string {
-	services.Services[0].Description = "XXX"
-	return ""
 }

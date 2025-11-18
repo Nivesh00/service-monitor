@@ -1,0 +1,24 @@
+{
+    "services": [
+        {
+            "endpoint": "https://prometheus.io",
+            "description": "Prometheus Monitoring Tool for Metrics"
+        },
+        {
+            "endpoint": "https://grafana.com",
+            "description": "Grafana Monitoring Tool for Logs"
+        },
+        {
+            "endpoint": "https://netflix.com",
+            "description": "Netflix Site for Media"
+        },
+        {
+            "endpoint": "https://amazon.com",
+            "description": "Amazon Online Store"
+        },
+        {
+            "endpoint": "https://bundesregierung.de",
+            "description": "German Federal Government"
+        }
+    ]
+}

@@ -7,11 +7,11 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	// "strconv"
 	"strings"
 )
 
-// Services is an array of services
+// Services contains only one attribute called Services, which 
+// is an array of the Service struct
 type Services struct {
 	Services []Service `json:"services"`
 }
@@ -27,7 +27,9 @@ func (services *Services) ToStr() string {
 		// Add service
 		str_val.WriteString("{" + service.ToStr() + "}")
 		// Skip seperator for last instance
-		if index == len(services.Services) - 1 { continue }
+		if index == len(services.Services) - 1 { 
+			continue 
+		}
 		// Add seperator
 		str_val.WriteString(", ")
 	}
@@ -36,9 +38,9 @@ func (services *Services) ToStr() string {
     return str_val.String()
 }
 
-// Service is the service which needs to be monitored. It consists of:
-// - Endpoint
-// - Description
+// Service is the service which needs to be monitored. It consists of an endpoint
+// and a description. Endpoint should be in the form `http(s)://<domain>`. Description is
+// optional and may be left empty
 type Service struct {
 	Endpoint string    `json:"endpoint"`
 	Description string `json:"description"`
@@ -48,13 +50,13 @@ type Service struct {
 func (service *Service) ToStr() string {
     
     // Convert array attrs to string
-    endpoint      := service.Endpoint
-    description  := service.Description
+    endpoint     := &service.Endpoint
+    description  := &service.Description
 
     // Convert all attrs to string
     str_val := fmt.Sprintf("endpoint: \"%s\", description: \"%s\"", 
-		endpoint,
-		description,
+		*endpoint,
+		*description,
 	)
 
     return str_val
@@ -73,7 +75,7 @@ func ReadServices(file_path string) *Services {
 	// create services slice
 	var services Services
 
-	buf := make([]byte, 1024)  	   // create buffer
+	buf := make([]byte, 1024) // create buffer
 	for {
 		// read chunk
 		read_len, err := service_file.Read(buf) // read 1024 bytes

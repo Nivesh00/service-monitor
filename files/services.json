@@ -19,6 +19,14 @@
         {
             "endpoint": "https://bundesregierung.de",
             "description": "German Federal Government"
+        },
+        {
+            "endpoint": "https://kenkjnv.io/",
+            "description": "Test Service that is unreachable"
+        },       
+        {
+            "endpoint": "https://google.com/404",
+            "description": "Test Service that return 404 error"
         }
     ]
 }

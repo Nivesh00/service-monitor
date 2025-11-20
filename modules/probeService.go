@@ -20,7 +20,7 @@ func ProbeAllServices(services *Services) *ServicesResponse {
 		service_resp, err := ProbeService(&service)
 		// Log error
 		if err != nil {
-			slog.Error("could not probe endpoint " + service.Endpoint, slog.Any("error", err))
+			slog.Error("could not probe endpoint " + service.Endpoint, slog.Any("error", *err))
 			continue
 		}
 		// Log success
@@ -32,14 +32,14 @@ func ProbeAllServices(services *Services) *ServicesResponse {
 }
 
 // Send HTTP request to an endpoint
-func ProbeService(service *Service) (*ServiceResponse, error) {
+func ProbeService(service *Service) (*ServiceResponse, *error) {
 
 	var service_resp ServiceResponse
 
 	// Probe service
     resp, err := http.Get(service.Endpoint)
     if err != nil {
-        return &service_resp, err
+        return &service_resp, &err
     }
     defer resp.Body.Close()
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/joho/godotenv"
 	"log/slog"
@@ -11,14 +12,8 @@ import (
 
 func main() {
 
-	err := godotenv.Load(".env.public")
-	if err != nil {
-		slog.Error("cannot load .env.public file")
-	}
-
-	err = godotenv.Load(".env.private")
-	if err != nil {
-		slog.Error("cannot load .env.private file")
+	err := LoadDotEnv(); if err != nil{
+		slog.Error("Fatal error occured", slog.Any("error", err))
 	}
 
 	FILE_PATH := os.Getenv("FILE_PATH")
@@ -26,5 +21,21 @@ func main() {
 	services := modules.ReadServices(FILE_PATH)
 
 	fmt.Println(services.ToStr())
-	fmt.Println(services.Services[0].ToStr())
+
+	os.Exit(0)
+}
+
+// Remove for Docker Image
+func LoadDotEnv() error {
+	err := godotenv.Load(".env.public")
+	if err != nil {
+		return errors.New("cannot load .env.public file")
+	}
+
+	err = godotenv.Load(".env.private")
+	if err != nil {
+		return errors.New("cannot load .env.private file")
+	}
+
+	return nil
 }

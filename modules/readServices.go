@@ -7,7 +7,8 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	"strconv"
+	// "strconv"
+	"strings"
 )
 
 // Services is an array of services
@@ -18,17 +19,20 @@ type Services struct {
 // Method to convert Services struct to string
 func (services *Services) ToStr() string {
     
-	var str_val string
+	var str_val strings.Builder
 
-	for index, service := range services.Services {
+	str_val.WriteString("[")
+	for _, service := range services.Services {
 
 		service_str := service.ToStr()
-		str_val = fmt.Sprintf("index: %s, service: (%s)",
-			strconv.Itoa(index),
-			service_str,
+		str_val.WriteString(
+			fmt.Sprintf("{%s}, ", service_str),
 		)
 	}
-    return str_val
+
+	str_val.WriteString("]")
+
+    return str_val.String()
 }
 
 // Service is the service which needs to be monitored. It consists of:
@@ -47,7 +51,7 @@ func (service *Service) ToStr() string {
     description  := service.Description
 
     // Convert all attrs to string
-    str_val := fmt.Sprintf("endpoint=\"%s\", description=\"%s\"", 
+    str_val := fmt.Sprintf("endpoint: \"%s\", description: \"%s\"", 
 		endpoint,
 		description,
 	)

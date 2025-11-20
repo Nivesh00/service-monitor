@@ -98,7 +98,7 @@ func (serviceResponse *ServiceResponse) ToStr() string {
 	StatusCode 	  := &serviceResponse.StatusCode
 
     // Convert all attrs to string
-    str_val := fmt.Sprintf("Content-Length: \"%d\", Content-Type: \"%s\", Request URL: \"%s\", Status Code: \"%d\"", 
+    str_val := fmt.Sprintf("Content-Length: \"%d\", Content-Type: \"%s\", Request-URL: \"%s\", Status-Code: \"%d\"", 
 		*ContentLength,
 		*ContentType,
 		*RequestUrl,

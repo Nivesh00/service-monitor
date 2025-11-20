@@ -82,10 +82,10 @@ func (servicesResponse *ServicesResponse) ToStr() string {
 }
 
 type ServiceResponse struct {
-	ContentLength int  `json:"contentLength"`
-	ContentType string `json:"contentType"`
-	RequestUrl string  `json:"requestUrl"`
-	StatusCode int 	   `json:"status"`
+	ContentLength int    `json:"contentLength"`
+	ContentType   string `json:"contentType"`
+	RequestUrl    string `json:"requestUrl"`
+	StatusCode    int 	 `json:"status"`
 }
 
 // Method to convert ServiceResponse struct to string

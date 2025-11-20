@@ -42,7 +42,7 @@ func (services *Services) ToStr() string {
 // and a description. Endpoint should be in the form `http(s)://<domain>`. Description is
 // optional and may be left empty
 type Service struct {
-	Endpoint string    `json:"endpoint"`
+	Endpoint 	string `json:"endpoint"`
 	Description string `json:"description"`
 }
 

@@ -22,14 +22,15 @@ func (services *Services) ToStr() string {
 	var str_val strings.Builder
 
 	str_val.WriteString("[")
-	for _, service := range services.Services {
+	for index, service := range services.Services {
 
-		service_str := service.ToStr()
-		str_val.WriteString(
-			fmt.Sprintf("{%s}, ", service_str),
-		)
+		// Add service
+		str_val.WriteString("{" + service.ToStr() + "}")
+		// Skip seperator for last instance
+		if index == len(services.Services) - 1 { continue }
+		// Add seperator
+		str_val.WriteString(", ")
 	}
-
 	str_val.WriteString("]")
 
     return str_val.String()

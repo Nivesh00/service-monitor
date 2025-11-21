@@ -78,8 +78,9 @@ func ReadServices(file_path string) *Services {
 	buf := make([]byte, 1024) // create buffer
 	for {
 		// read chunk
-		read_len, err := service_file.Read(buf) // read 1024 bytes
-		buf = bytes.Trim(buf, "\x00")  			// trim null values
+		read_len, err := service_file.Read(buf)  // read 1024 bytes
+		buf 		   = bytes.Trim(buf, "\x00") // trim null values
+		
 		if err != nil && err != io.EOF {
 			slog.Error("an error occured while reading the services file")
 			panic(err)

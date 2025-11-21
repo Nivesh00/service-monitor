@@ -1,8 +1,6 @@
 package modules
 
 import(
-	// "bufio"
-	// "errors"
 	"fmt"
 	"net/http"
 	"log/slog"
@@ -45,9 +43,9 @@ func ProbeService(service *Service) (*ServiceResponse, *error) {
 
 	// Assign attributes to ServiceResponse struct
 	service_resp.ContentLength = int(resp.ContentLength)
-	service_resp.ContentType = strings.Join(resp.Header["Content-Type"], ", ")
-	service_resp.RequestUrl = service.Endpoint
-	service_resp.StatusCode = resp.StatusCode
+	service_resp.ContentType   = strings.Join(resp.Header["Content-Type"], ", ")
+	service_resp.RequestUrl    = service.Endpoint
+	service_resp.StatusCode    = resp.StatusCode
 
 	// TODO: parse resp.Body
 	//

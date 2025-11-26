@@ -1,59 +1,87 @@
 package modules
 
-import(
+import (
 	"fmt"
-	"net/http"
 	"log/slog"
+	"net/http"
 	"strings"
+	"sync"
+
 )
+
+// Return type for goroutines
+type result struct {
+	SvcResp *ServiceResponse
+	Err *error
+}
+
 
 // Wrapper for function ProbeService, which loop over an array of structs
 // and send HTTP requests to the endpoint attribute
 func ProbeAllServices(services *Services) *ServicesResponse {
 
-	var services_resp ServicesResponse
+	var servicesResponse ServicesResponse
 
 	// Loop array and probe each endpoint
 	for _, service := range services.Services {
-		service_resp, err := ProbeService(&service)
-		// Log error
-		if err != nil {
-			slog.Error("could not probe endpoint " + service.Endpoint, slog.Any("error", *err))
+		
+		// Create cannel for execution
+		execChannel := make(chan *result, 1)
+		// Exec goroutine
+		go ProbeService(&service, &execChannel)
+		resultObj := <-execChannel
+		// If error, continue
+		if resultObj.Err != nil {
+			slog.Error("could not probe endpoint " + service.Endpoint, slog.Any("error", *resultObj.Err))
 			continue
 		}
+
 		// Log success
 		slog.Info("successfully probed endpoint " + service.Endpoint)
-		services_resp.ServicesResponse = append(services_resp.ServicesResponse, *service_resp)
+
+		// Lock before writing and unlock again afterwards
+		servicesResponse.mu.Lock()
+		servicesResponse.ServicesResponse = append(servicesResponse.ServicesResponse, *resultObj.SvcResp)
+		servicesResponse.mu.Unlock()
 	}
 
-	return &services_resp
+	return &servicesResponse
 }
 
 // Send HTTP request to an endpoint
-func ProbeService(service *Service) (*ServiceResponse, *error) {
+func ProbeService(service *Service, execChannel *chan *result) {
+	fmt.Println("Start ", service.Endpoint)
 
-	var service_resp ServiceResponse
+	var serviceResp ServiceResponse
+	var probeResult result
 
 	// Probe service
     resp, err := http.Get(service.Endpoint)
     if err != nil {
-        return &service_resp, &err
+		// Set Err of result to err ptr
+		probeResult.Err = &err
+        *execChannel <- &probeResult
+		return
     }
     defer resp.Body.Close()
 
 	// Assign attributes to ServiceResponse struct
-	service_resp.ContentLength = int(resp.ContentLength)
-	service_resp.ContentType   = strings.Join(resp.Header["Content-Type"], ", ")
-	service_resp.RequestUrl    = service.Endpoint
-	service_resp.StatusCode    = resp.StatusCode
+	serviceResp.ContentLength = int(resp.ContentLength)
+	serviceResp.ContentType   = strings.Join(resp.Header["Content-Type"], ", ")
+	serviceResp.RequestUrl    = service.Endpoint
+	serviceResp.StatusCode    = resp.StatusCode
 
 	// TODO: parse resp.Body
 	//
 
-	return &service_resp, nil
+	// Set response for service
+	probeResult.SvcResp = &serviceResp
+
+	*execChannel <- &probeResult
 }
 
 type ServicesResponse struct {
+	mu sync.Mutex
 	ServicesResponse []ServiceResponse `json:"servicesResponse"`
 }
 

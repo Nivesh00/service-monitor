@@ -2,15 +2,18 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
 	"github.com/joho/godotenv"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/Nivesh00/service-monitor/modules"
 )
 
 func main() {
+
+	// start := time.Now()
 
 	// Remove for Docker Image
 	err := LoadDotEnv(); if err != nil{
@@ -25,12 +28,21 @@ func main() {
 	services := modules.ReadServices(FILE_PATH)
 	
 	// Probe all services
-	services_resp := modules.ProbeAllServices(services)
+	for {
+		go func() {
+			slog.Info("Starting probe")
+			time.Sleep(5 * time.Second)
+			modules.ProbeAllServices(services)
+		}()
 
-	// Print
-	fmt.Println(services_resp.ToStr())
+		go func() {
+			slog.Info("Other task")
+			time.Sleep(10 * time.Second)
+		}()
+	}
 
-	os.Exit(0)
+	// fmt.Printf("Program duration: %6s\n", time.Since(start))
+	// os.Exit(0)
 }
 
 // Remove for Docker Image
